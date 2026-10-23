@@ -74,121 +74,78 @@ console.log("Station 1 — Question 7:", pendingOrdersUnrated);
 
 // Station 1 — Question 8: Get unique customer names
 
-
 const uniqueNames = [
   ...new Set(orders.map(({ customer }) => customer.name))
 ];
 console.log("Station 1 — Question 8:", uniqueNames);
 
 
-// Station 2 — Question 1
-// Add the correct solution here
-// after checking your assignment instructions.
 
 
+// ==========================================
+// STATION 2 — Calculations with reduce
+// Questions 9–14
+// ==========================================
 
-// Station 2 — Question 2: Total revenue from delivered orders
-const deliveredRevenue = orders
+// Question 9: Calculate order totals without changing original data
+
+const orderTotal = ({ items }) =>
+  items.reduce((sum, item) => sum + item.price * item.qty, 0);
+
+const ordersWithTotals = orders.map((order) => ({
+  ...order,
+  total: orderTotal(order)
+}));
+
+console.log("Question 9:", ordersWithTotals);
+
+// Question 10: Calculate revenue from delivered orders
+
+const deliveredRevenue = ordersWithTotals
   .filter(({ status }) => status === "delivered")
-  .reduce((total, order) => {
-    const orderTotal = order.items.reduce(
-      (sum, item) => sum + item.price * item.qty,
-      0
-    );
-    return total + orderTotal;
-  }, 0);
+  .reduce((sum, order) => sum + order.total, 0);
 
-console.log(
-  "Station 2 — Question 2: Delivered revenue =",
-  deliveredRevenue,
-  "RWF"
-);
+console.log("Question 10: Delivered revenue =", deliveredRevenue, "RWF");
 
-// Station 2 — Question 3: Calculate average rating
-
-
+// Question 11: Calculate average rating, rounded to 1 decimal
 
 const ratedOrders = orders.filter(({ rating }) => rating !== null);
 
-const averageRating =
-  ratedOrders.reduce((sum, { rating }) => sum + rating, 0) /
-  ratedOrders.length;
+const averageRating = Number(
+  (
+    ratedOrders.reduce((sum, { rating }) => sum + rating, 0) /
+    ratedOrders.length
+  ).toFixed(1)
+);
 
-console.log("Station 2 — Question 3: Average rating =", averageRating);
+console.log("Question 11: Average rating =", averageRating);
 
+// Question 12: Calculate total Brochette quantity using flatMap
 
+const brochetteQty = orders
+  .flatMap(({ items }) => items)
+  .filter(({ name }) => name === "Brochette")
+  .reduce((sum, item) => sum + item.qty, 0);
 
-// Station 2 — Question 4: Total Brochette quantity
+console.log("Question 12: Brochette quantity =", brochetteQty);
 
+// Question 13: Find the most expensive order
 
-const brochetteQty = orders.reduce((total, order) => {
-  const quantity = order.items
-    .filter(({ name }) => name === "Brochette")
-    .reduce((sum, item) => sum + item.qty, 0);
-
-  return total + quantity;
-}, 0);
-
-console.log("Station 2 — Question 4: Brochette quantity =", brochetteQty);
-
-
-
-// Station 2 — Question 5: Most expensive order
-
-
-
-const orderTotals = orders.map((order) => {
-  const total = order.items.reduce(
-    (sum, item) => sum + item.price * item.qty,
-    0
-  );
-
-  return {
-    id: order.id,
-    customer: order.customer.name,
-    total
-  };
-});
-
-const mostExpensiveOrder = orderTotals.reduce((highest, order) =>
+const mostExpensiveOrder = ordersWithTotals.reduce((highest, order) =>
   order.total > highest.total ? order : highest
 );
 
-console.log("Station 2 — Question 5:", mostExpensiveOrder);
+console.log("Question 13: Most expensive order =", {
+  id: mostExpensiveOrder.id,
+  customer: mostExpensiveOrder.customer.name,
+  total: mostExpensiveOrder.total
+});
 
+// Question 14: Count orders by status
 
-
-// Station 2 — Question 6: Count orders by status
-
-
-const statusCounts = orders.reduce((counts, order) => {
-  counts[order.status] = (counts[order.status] || 0) + 1;
+const statusCounts = orders.reduce((counts, { status }) => {
+  counts[status] = (counts[status] || 0) + 1;
   return counts;
 }, {});
 
-console.log("Station 2 — Question 6:", statusCounts);
-
-
-
-// Station 2 — Question 7: Count all orders
-
-
-const totalOrders = orders.length;
-console.log("Station 2 — Question 7: Total orders =", totalOrders);
-
-
-
-// Station 2 — Question 8: Count unique customers
-
-
-
-const uniqueCustomers = new Set(
-  orders.map((order) => order.customer.name)
-);
-
-console.log(
-  "Station 2 — Question 8: Unique customers =",
-  uniqueCustomers.size
-);
-
-
+console.log("Question 14: Orders by status =", statusCounts);
