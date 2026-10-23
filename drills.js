@@ -1,4 +1,4 @@
-javascript
+
 import { orders } from "./data.js";
 
 const ORIGINAL = JSON.stringify(orders);
@@ -149,3 +149,110 @@ const statusCounts = orders.reduce((counts, { status }) => {
 }, {});
 
 console.log("Question 14: Orders by status =", statusCounts);
+
+
+
+ // Station 3 — Question 15
+const revenueByDistrict = orders
+  .filter(order => order.status === "delivered")
+  .reduce((totals, order) => {
+    const district = order.customer.district;
+    const revenue = order.items.reduce(
+      (sum, item) => sum + item.price * item.qty,
+      0
+    );
+
+    totals[district] = (totals[district] || 0) + revenue;
+    return totals;
+  }, {});
+
+console.log("Question 15:", revenueByDistrict);
+
+
+
+
+
+ // Station 3 — Question 16
+
+
+const ordersByDate = Object.groupBy(orders, order => order.date);
+
+const dailySummary = Object.entries(ordersByDate).map(([date, dayOrders]) => {
+  const revenue = dayOrders.reduce((sum, order) => {
+    return sum + order.items.reduce(
+      (total, item) => total + item.price * item.qty,
+      0
+    );
+  }, 0);
+
+  return {
+    date,
+    count: dayOrders.length,
+    revenue
+  };
+});
+
+console.log("Question 16:", dailySummary);
+
+
+
+
+ // Station 3 — Question 17
+
+
+const itemTotals = orders
+  .flatMap(order => order.items)
+  .reduce((totals, item) => {
+    totals[item.name] = (totals[item.name] || 0) + item.qty;
+    return totals;
+  }, {});
+
+const topThreeItems = Object.entries(itemTotals)
+  .map(([name, qty]) => ({ name, qty }))
+  .toSorted((a, b) => b.qty - a.qty)
+  .slice(0, 3);
+
+console.log("Question 17:", topThreeItems);
+
+
+
+
+ // Station 3 — Question 18
+const customerSummary = Object.values(
+  orders.reduce((customers, order) => {
+    const name = order.customer.name;
+
+    if (!customers[name]) {
+      customers[name] = {
+        name,
+        orders: 0,
+        spent: 0
+      };
+    }
+
+    customers[name].orders += 1;
+
+    customers[name].spent += order.items.reduce(
+      (sum, item) => sum + item.price * item.qty,
+      0
+    );
+
+    return customers;
+  }, {})
+)
+  .toSorted((a, b) => b.spent - a.spent);
+
+console.log("Question 18:", customerSummary);
+
+
+
+ // Station 3 — Question 19
+const menuPrices = Object.fromEntries(
+  orders.flatMap(order =>
+    order.items.map(item => [item.name, item.price])
+  )
+);
+
+console.log("Question 19:", menuPrices);
+
+
