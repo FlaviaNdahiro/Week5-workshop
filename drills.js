@@ -256,3 +256,166 @@ const menuPrices = Object.fromEntries(
 console.log("Question 19:", menuPrices);
 
 
+
+
+
+ // Station 4 — Question 20
+
+
+
+function markDelivered(orders, id) {
+  return orders.map(order =>
+    order.id === id && order.status === "pending"
+      ? { ...order, status: "delivered" }
+      : order
+  );
+}
+
+const updatedOrders = markDelivered(orders, 105);
+
+console.log(
+  "Question 20:",
+  updatedOrders.find(order => order.id === 105)
+);
+
+console.log(
+  "Original unchanged:",
+  JSON.stringify(orders) === ORIGINAL
+);
+
+
+
+ // Station 4 — Question 21
+
+
+function rateOrder(orders, id, rating) {
+  return orders.map(order =>
+    order.id === id && order.status === "delivered"
+      ? { ...order, rating }
+      : order
+  );
+}
+
+const ratedOrdersTest = rateOrder(orders, 101, 4);
+
+console.log(
+  "Question 21:",
+  ratedOrdersTest.find(order => order.id === 101)
+);
+
+console.log(
+  "Original unchanged:",
+  JSON.stringify(orders) === ORIGINAL
+);
+
+
+
+// Station 4 — Question 22
+
+function changeDistrict(orders, id, district) {
+  return orders.map(order =>
+    order.id === id
+      ? {
+          ...order,
+          customer: {
+            ...order.customer,
+            district
+          }
+        }
+      : order
+  );
+}
+
+const districtTest = changeDistrict(orders, 101, "Kicukiro");
+
+console.log(
+  "Question 22:",
+  districtTest.find(order => order.id === 101)
+);
+
+console.log(
+  "Original unchanged:",
+  JSON.stringify(orders) === ORIGINAL
+);
+
+
+
+// Station 4 — Question 23
+
+function addItem(orders, id, item) {
+  return orders.map(order =>
+    order.id === id
+      ? {
+          ...order,
+          items: [...order.items, item]
+        }
+      : order
+  );
+}
+
+const addItemTest = addItem(orders, 101, {
+  name: "Juice",
+  price: 1500,
+  qty: 1
+});
+
+console.log(
+  "Question 23:",
+  addItemTest.find(order => order.id === 101).items
+);
+
+console.log(
+  "Original unchanged:",
+  JSON.stringify(orders) === ORIGINAL
+);
+
+
+// Station 4 — Question 24
+
+function removeCancelled(orders) {
+  return orders.filter(order => order.status !== "cancelled");
+}
+
+const activeOrders = removeCancelled(orders);
+
+console.log(
+  "Question 24 — Remaining orders:",
+  activeOrders.length
+);
+
+console.log(
+  "Question 24 — Cancelled orders remain:",
+  activeOrders.some(order => order.status === "cancelled")
+);
+
+console.log(
+  "Original unchanged:",
+  JSON.stringify(orders) === ORIGINAL
+);
+
+
+
+
+// Station 4 — Question 25
+
+function applyDiscount(orders, percent) {
+  return orders.map(order => ({
+    ...order,
+    items: order.items.map(item => ({
+      ...item,
+      price: Math.round(item.price * (1 - percent / 100))
+    }))
+  }));
+}
+
+const discountedOrders = applyDiscount(orders, 10);
+
+console.log(
+  "Question 25 — Discounted order:",
+  discountedOrders.find(order => order.id === 101)
+);
+
+console.log(
+  "Original unchanged:",
+  JSON.stringify(orders) === ORIGINAL
+);
